@@ -7,22 +7,26 @@ from models import Book, Base
 
 # Create tables in the database
 Base.metadata.create_all(bind=engine)
+
 app = FastAPI()
 # Dependency to get the database session
 def get_db():
     db = SessionLocal()
     try:
-     yield db
+        yield db
     finally:
-     db.close()
+        db.close()
+
 # Pydantic model to use in FastAPI request and response
 class BookCreate(BaseModel):
-     title: str
-     author: str
+    title: str
+    author: str
 class BookOut(BookCreate):
     id: int
+
     class Config:
-     orm_mode = True
+        orm_mode = True
+
 # Endpoint to fetch all books
 @app.get("/books", response_model=List[BookOut])
 def get_books(db: Session = Depends(get_db)):
